@@ -10,7 +10,7 @@ menu = Menu()
 coffee_maker = CoffeeMaker()
 money_machine = MoneyMachine()
 
-#커피 머신을 만들자(코드를 사용)
+#커피 머신을 만들자(새로운 변수를 만들자)
 def order_play():
     global play
     #사용가능한 메뉴 출력
