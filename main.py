@@ -1,78 +1,48 @@
-MENU = {
-    "espresso": {
-        "ingredients": {
-            "water": 50,
-            "coffee": 18,
-        },
-        "cost": 1.5,
-    },
-    "latte": {
-        "ingredients": {
-            "water": 200,
-            "milk": 150,
-            "coffee": 24,
-        },
-        "cost": 2.5,
-    },
-    "cappuccino": {
-        "ingredients": {
-            "water": 250,
-            "milk": 100,
-            "coffee": 24,
-        },
-        "cost": 3.0,
-    }
-}
-machin_on = True
+from menu import Menu, MenuItem
 
-resources = {"water": 1000,
-            "milk": 500,
-            "coffee": 100
-            }
-profit = 0
+from coffee_maker import CoffeeMaker
+
+from money_machine import MoneyMachine
+
+# 코드를 짜보자 천천히
+# 먼저 객체를 생성하자.
+menu = Menu()
+coffee_maker = CoffeeMaker()
+money_machine = MoneyMachine()
+
+#커피 머신을 만들자(코드를 사용)
+def order_play():
+    global play
+    #사용가능한 메뉴 출력
+    print("다음 메뉴 중에 고르시오.")
+    print(menu.get_items())
+
+    #메뉴 질문
+    order_name = input("어떤 메뉴를 선택하시겠어요?: ").lower()
+    if order_name in menu.get_items():
+        #주문한 커피 정보 가져오기
+        order = menu.find_drink(order_name)
+        #재료가 충분한지 확인
+        if coffee_maker.is_resource_sufficient(order):
+            #돈 지불하기
+            if money_machine.make_payment(order.cost):
+                #커피제조하기
+                coffee_maker.make_coffee(order)
 
 
+    elif order_name == 'off':
+        play = False
 
-#TODO 코인 함수 정의, 차감
-def machine(coffee_guess, menu):
-    global machin_on, profit
-    print("please insert coins.")
-    quarters = float(input("How many quarters?: ")) * 0.25
-    dimes = float(input("How many dimes?: ")) * 0.1
-    nickles = float(input("How many nickles?: ")) * 0.05
-    pennies = float(input("How many pennies?: ")) * 0.01
-
-    pay = round(quarters + dimes + nickles + pennies, 2)
-    total = round(pay - float(menu["cost"]), 2)
-
-    if pay < menu["cost"]:
-        print(f"총 금액:{pay}$ 받았습니다. 금액이 충족하지 않습니다. 다시 넣어주세요!!.")
+    elif order_name == 'report':
+        coffee_maker.report()
     else:
-        print(f"총 금액:{pay}$ 받았습니다. {coffee_guess} 나왔습니다. 맛있게 드세요!!. 거스름돈은 {total}$입니다.")
-        profit += menu["cost"]
+        print("잘못입력하셨습니다. 다시 주문해주세요.")
 
-#TODO 재료 차감
-        for item in menu['ingredients']:
-            resources[item] -= menu['ingredients'][item]
-        machin_on = False
+#자판기 무한 반복
+play = True
+while play:
+    order_play()
 
-#TODO report(재료)의 정의 및 머신 작동
-    # 시작
-while machin_on:
-    guess = input("무엇을 원하십니까? ('espresso', 'latte', 'cappuccino'): ").lower()
-
-    if guess not in ["espresso", "latte", "cappuccino", "report", "off"]:
-        print("'espresso', 'latte', 'cappuccino'중 한가지를 골라주세요!.")
-    elif guess == "report":
-        print(f"Water: {resources['water']}ml")
-        print(f"Milk: {resources['milk']}ml")
-        print(f"Coffee: {resources['coffee']}g")
-        print(f"Money: ${profit}")
-    elif guess == "off":
-        machin_on = False
-    else:
-        menu = MENU[guess]
-        machine(guess, menu)  # machine 함수 호출 시에 커피 이름과 메뉴 정보를 전달
 
 
 
